@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-App<UG-Navigate-Routing>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.ugnavigate.App",
+            "projectName": "UG-Navigate-Routing",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UG Navigate - Optimal Routing Solution</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus, .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .route-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .route-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .route-algorithm {
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+
+        .route-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .route-detail {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .route-detail-label {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .route-detail-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .route-path {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .route-path-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .route-path-steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .route-step {
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .route-landmarks {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .route-landmarks-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .route-landmarks-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .route-landmark {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .route-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>UG Navigate</h1>
+            <p>Optimal Routing Solution for University of Ghana Campus</p>
+        </div>
+        
+        <div class="content">
+            <form id="routingForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startLocation">Start Location</label>
+                        <select id="startLocation" required>
+                            <option value="">Select start location</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="endLocation">End Location</label>
+                        <select id="endLocation" required>
+                            <option value="">Select end location</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="searchTerm">Search Term (Optional)</label>
+                        <input type="text" id="searchTerm" placeholder="e.g., Library, Bank, Computer Science">
+                    </div>
+                    <div class="form-group">
+                        <label for="routeType">Route Type</label>
+                        <select id="routeType">
+                            <option value="shortest">Shortest Route</option>
+                            <option value="optimal">Optimal Route</option>
+                            <option value="landmarks">Landmark-based</option>
+                            <option value="top">Top Routes</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn">Find Route</button>
+            </form>
+            
+            <div id="results" class="results"></div>
+        </div>
+    </div>
+
+    <script>
+        // API base URL
+        const API_BASE = '/api/routing';
+        
+        // Load locations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLocations();
+        });
+        
+        // Load all available locations
+        async function loadLocations() {
+            try {
+                const response = await fetch(`${API_BASE}/locations`);
+                const locations = await response.json();
+                
+                const startSelect = document.getElementById('startLocation');
+                const endSelect = document.getElementById('endLocation');
+                
+                locations.forEach(location => {
+                    const startOption = document.createElement('option');
+                    startOption.value = location;
+                    startOption.textContent = location;
+                    startSelect.appendChild(startOption);
+                    
+                    const endOption = document.createElement('option');
+                    endOption.value = location;
+                    endOption.textContent = location;
+                    endSelect.appendChild(endOption);
+                });
+            } catch (error) {
+                console.error('Error loading locations:', error);
+            }
+        }
+        
+        // Handle form submission
+        document.getElementById('routingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const startLocation = document.getElementById('startLocation').value;
+            const endLocation = document.getElementById('endLocation').value;
+            const searchTerm = document.getElementById('searchTerm').value;
+            const routeType = document.getElementById('routeType').value;
+            
+            if (!startLocation || !endLocation) {
+                showError('Please select both start and end locations');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                let routes = [];
+                
+                switch (routeType) {
+                    case 'shortest':
+                        routes = await getShortestRoute(startLocation, endLocation);
+                        break;
+                    case 'optimal':
+                        routes = await getOptimalRoute(startLocation, endLocation);
+                        break;
+                    case 'landmarks':
+                        if (searchTerm) {
+                            routes = await getLandmarkRoutes(startLocation, endLocation, searchTerm);
+                        } else {
+                            routes = await getTopRoutes(startLocation, endLocation, 3);
+                        }
+                        break;
+                    case 'top':
+                        routes = await getTopRoutes(startLocation, endLocation, 3);
+                        break;
+                }
+                
+                displayRoutes(routes);
+            } catch (error) {
+                console.error('Error finding routes:', error);
+                showError('Error finding routes. Please try again.');
+            }
+        });
+        
+        // API functions
+        async function getShortestRoute(start, end) {
+            const response = await fetch(`${API_BASE}/shortest?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+            if (!response.ok) throw new Error('Failed to get shortest route');
+            const route = await response.json();
+            return [route];
+        }
+        
+        async function getOptimalRoute(start, end) {
+            const response = await fetch(`${API_BASE}/optimal?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+            if (!response.ok) throw new Error('Failed to get optimal route');
+            const route = await response.json();
+            return [route];
+        }
+        
+        async function getLandmarkRoutes(start, end, landmark) {
+            const response = await fetch(`${API_BASE}/landmarks/${encodeURIComponent(landmark)}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+            if (!response.ok) throw new Error('Failed to get landmark routes');
+            return await response.json();
+        }
+        
+        async function getTopRoutes(start, end, count) {
+            const response = await fetch(`${API_BASE}/top?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&count=${count}`);
+            if (!response.ok) throw new Error('Failed to get top routes');
+            return await response.json();
+        }
+        
+        // Display functions
+        function showLoading() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="loading">Finding routes...</div>';
+        }
+        
+        function showError(message) {
+            const results = document.getElementById('results');
+            results.innerHTML = `<div class="error">${message}</div>`;
+        }
+        
+        function displayRoutes(routes) {
+            const results = document.getElementById('results');
+            
+            if (!routes || routes.length === 0) {
+                results.innerHTML = '<div class="error">No routes found</div>';
+                return;
+            }
+            
+            const routesHtml = routes.map((route, index) => `
+                <div class="route-card">
+                    <div class="route-header">
+                        <div class="route-title">Route ${index + 1}</div>
+                        <div class="route-algorithm">${route.algorithm}</div>
+                    </div>
+                    
+                    <div class="route-details">
+                        <div class="route-detail">
+                            <div class="route-detail-label">Distance</div>
+                            <div class="route-detail-value">${route.formattedDistance}</div>
+                        </div>
+                        <div class="route-detail">
+                            <div class="route-detail-label">Time</div>
+                            <div class="route-detail-value">${route.formattedTime}</div>
+                        </div>
+                        <div class="route-detail">
+                            <div class="route-detail-label">Steps</div>
+                            <div class="route-detail-value">${route.pathLength}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="route-path">
+                        <div class="route-path-title">Path:</div>
+                        <div class="route-path-steps">
+                            ${route.path.map(step => `<div class="route-step">${step}</div>`).join('')}
+                        </div>
+                    </div>
+                    
+                    ${route.landmarks && route.landmarks.length > 0 ? `
+                        <div class="route-landmarks">
+                            <div class="route-landmarks-title">Landmarks:</div>
+                            <div class="route-landmarks-list">
+                                ${route.landmarks.map(landmark => `<div class="route-landmark">${landmark}</div>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+            
+            results.innerHTML = routesHtml;
+        }
+    </script>
+</body>
+</html> 

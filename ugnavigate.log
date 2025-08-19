@@ -1,0 +1,6 @@
+2025-08-09 09:44:51.839  INFO 15788 --- [main] com.ugnavigate.App                       : Starting App using Java 1.8.0_461 on DESKTOP-EUHIHGG with PID 15788 (C:\Users\USER\Desktop\UG-Navigate-Routing\target\classes started by USER in C:\Users\USER\Desktop\UG-Navigate-Routing)
+2025-08-09 09:44:51.849  INFO 15788 --- [main] com.ugnavigate.App                       : No active profile set, falling back to default profiles: default
+2025-08-09 09:45:00.446  INFO 15788 --- [main] com.ugnavigate.App                       : Started App in 14.452 seconds (JVM running for 20.646)
+2025-08-09 11:50:37.458  INFO 14140 --- [main] com.ugnavigate.App                       : Starting App using Java 1.8.0_461 on DESKTOP-EUHIHGG with PID 14140 (C:\Users\USER\Desktop\UG-Navigate-Routing\target\classes started by USER in C:\Users\USER\Desktop\UG-Navigate-Routing)
+2025-08-09 11:50:37.470  INFO 14140 --- [main] com.ugnavigate.App                       : No active profile set, falling back to default profiles: default
+2025-08-09 11:50:39.918  INFO 14140 --- [main] com.ugnavigate.App                       : Started App in 4.128 seconds (JVM running for 6.629)
